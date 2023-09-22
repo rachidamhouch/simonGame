@@ -1,3 +1,8 @@
+let start = 0;
+let recoredGame = [];
+let recoredPlyer = [];
+let level = 1;
+let check = 0;
 // Red
 let red  = new Audio();
 let src1  = document.createElement("source");
@@ -14,8 +19,10 @@ function runRed()
     }, 100);
 }
 
+
 $("#red").click(() => {
     runRed();
+    push(1);
 });
 
 //Green
@@ -37,6 +44,7 @@ function runGreen()
 
 $("#green").click(() => {
     runGreen();
+    push(0);
 });
 
 //Yellow
@@ -58,6 +66,7 @@ function runYellow()
 
 $("#yellow").click(() => {
     runYellow();
+    push(2);
 });
 
 //blue
@@ -79,6 +88,7 @@ function runBlue()
 
 $("#blue").click(() => {
     runBlue();
+    push(3);
 });
 
 // Wrong
@@ -98,3 +108,61 @@ function runWrong()
         $("body").removeClass("game-over");
     }, 100);
 }
+
+/// Start ////
+
+function push(m)
+{
+    recoredPlyer.push(m);
+    check++;
+    for (let i = 0; i < check; i++)
+    {
+       if (recoredGame[i] != recoredPlyer[i])
+       {
+            runWrong();
+            start = 0;
+            level = 1;
+            recoredGame = [];
+            recoredPlyer = [];
+            check = 0;
+            return;
+       }
+    }
+    if (check == recoredGame.length)
+        setTimeout(() => {
+            random();
+        }, 1500);
+}
+function random()
+{
+    let n = Math.floor(Math.random() * 4);
+    recoredGame.push(n);
+    recoredPlyer = [];
+    check = 0;
+    $("#level-title").text("Level " + level++);
+    switch (n) {
+        case 0:
+            runGreen();
+            break;
+        case 1:
+            runRed();
+            break;
+        case 2:
+            runYellow();
+            break;
+        case 3:
+            runBlue();
+            break;
+    }
+}
+
+$(document).keydown(() => {
+    if (!start)
+    {
+        $("#level-title").text("Press A Key to Start");
+        start = 1;
+        setTimeout(() => {
+            random();
+        }, 500);
+    }
+});
